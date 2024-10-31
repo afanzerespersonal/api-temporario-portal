@@ -1,0 +1,364 @@
+openapi: "3.0.1"
+info:
+  title: "portal-srm-api"
+  description: "Portal SRM API"
+  version: "2023-10-25T17:04:59Z"
+servers:
+- url: "https://spezcbzxei.execute-api.us-east-1.amazonaws.com/{basePath}"
+  variables:
+    basePath:
+      default: "v1"
+tags: 
+  - name: cors
+    description: "cors"
+paths:
+  /contracts/{contractId}/download/{filename}/presigned-url:
+    get: 
+      summary: Buscar presigned URL para download de arquivo de contrato
+      description: Buscar presigned URL para download de arquivo de contrato
+      parameters:
+        - name: contractId
+          in: path
+          required: true
+          description: Unique identifier for the contract
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PresignedUrl"
+        '404':
+          description: Contract not found
+        '500':
+          description: Server error
+      security:
+      - api_key: []
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: "POST"
+        uri: ${LAMBDA_INVOKE_ARN}
+        responses:
+          default:
+            statusCode: "200"
+        requestTemplates:
+          application/json: "{ \"statusCode\": 200 }"
+        passthroughBehavior: "when_no_templates"
+        timeoutInMillis: 29000
+        contentHandling: "CONVERT_TO_TEXT"
+    options:
+      summary: CORS support
+      description: |
+        Enable CORS by returning correct headers
+      tags:
+      - cors
+      responses:
+        200:
+          description: Default response for CORS method
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content: {}
+      x-amazon-apigateway-integration:
+        type: mock
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+  /contracts/{contractId}/upload/{filename}/presigned-url:
+    get: 
+      summary: Buscar presigned URL para upload de arquivo de contrato
+      description: Buscar presigned URL para upload de arquivo de contrato
+      parameters:
+        - name: contractId
+          in: path
+          required: true
+          description: Unique identifier for the contract
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PresignedUrl"
+        '404':
+          description: Contract not found
+        '500':
+          description: Server error
+      security:
+      - api_key: []
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: "POST"
+        uri: ${LAMBDA_INVOKE_ARN}
+        responses:
+          default:
+            statusCode: "200"
+        requestTemplates:
+          application/json: "{ \"statusCode\": 200 }"
+        passthroughBehavior: "when_no_templates"
+        timeoutInMillis: 29000
+        contentHandling: "CONVERT_TO_TEXT"
+    options:
+      summary: CORS support
+      description: |
+        Enable CORS by returning correct headers
+      tags:
+      - cors
+      responses:
+        200:
+          description: Default response for CORS method
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content: {}
+      x-amazon-apigateway-integration:
+        type: mock
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+  /contracts/{contractId}: 
+    get:
+      summary: Buscar arquivos existentes em um contrato
+      description: Buscar arquivos existentes em um contrato
+      parameters:
+        - name: contractId
+          in: path
+          required: true
+          description: Unique identifier for the contract
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Contract details successfully retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContractFiles"
+        '404':
+          description: Contract not found
+        '500':
+          description: Internal server error
+      security:
+      - api_key: []
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: "POST"
+        uri: ${LAMBDA_INVOKE_ARN}
+        responses:
+          default:
+            statusCode: "200"
+        requestTemplates:
+          application/json: "{ \"statusCode\": 200 }"
+        passthroughBehavior: "when_no_templates"
+        timeoutInMillis: 29000
+        contentHandling: "CONVERT_TO_TEXT"
+    options:
+      summary: CORS support
+      description: |
+        Enable CORS by returning correct headers
+      tags:
+      - cors
+      responses:
+        200:
+          description: Default response for CORS method
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content: {}
+      x-amazon-apigateway-integration:
+        type: mock
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+  /contracts:
+    get: 
+      summary: Listar todos os contratos existentes
+      description: Listar todos os contratos existentes
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/Contracts"
+        '500':
+          description: Server error
+      security:
+      - api_key: []
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: "POST"
+        uri: ${LAMBDA_INVOKE_ARN}
+        responses:
+          default:
+            statusCode: "200"
+        requestTemplates:
+          application/json: "{ \"statusCode\": 200 }"
+        passthroughBehavior: "when_no_templates"
+        timeoutInMillis: 29000
+        contentHandling: "CONVERT_TO_TEXT"
+    post:
+      summary: Criar novo contrato
+      description: Criar novo contrato
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Contract creation status
+        '400':
+          description: Invalid input or contract already exists
+        '500':
+          description: Server error
+      security:
+      - api_key: []
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: "POST"
+        uri: ${LAMBDA_INVOKE_ARN}
+        responses:
+          default:
+            statusCode: "200"
+        requestTemplates:
+          application/json: "{ \"statusCode\": 200 }"
+        passthroughBehavior: "when_no_templates"
+        timeoutInMillis: 29000
+        contentHandling: "CONVERT_TO_TEXT"
+    options:
+      summary: CORS support
+      description: |
+        Enable CORS by returning correct headers
+      tags:
+      - cors
+      responses:
+        200:
+          description: Default response for CORS method
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content: {}
+      x-amazon-apigateway-integration:
+        type: mock
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+components:
+  schemas:
+    Empty:
+      title: "Empty Schema"
+      type: "object"
+    PresignedUrl:
+      title: "Presigned URL"
+      type: "object"
+      properties:
+        contract: 
+          type: string
+          description: Identificador do contrato
+        filename: 
+          type: string
+          description: Nome do arquivo
+        url:
+          type: string
+          description: URL pre-signed para download do arquivo
+    ContractFiles: 
+      title: "Contract Files"
+      type: "object"
+      properties:
+        contract: 
+          type: string
+          description: Identificador do contrato
+        files:
+          type: array
+          items:
+            type: string
+          description: Lista de arquivos do contrato
+    Contracts: 
+      title: "Contracts"
+      type: "object"
+      properties:
+        contracts:
+          type: array
+          items:
+            type: string
+          description: Lista de contratos
+  securitySchemes:
+    api_key:
+      type: "apiKey"
+      name: "x-api-key"
+      in: "header"
